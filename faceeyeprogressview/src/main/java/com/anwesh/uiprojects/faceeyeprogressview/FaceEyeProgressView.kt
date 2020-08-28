@@ -132,4 +132,41 @@ class FaceEyeProgressView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    data class FEPNode(var i : Int, val state : State = State()) {
+
+        private var next : FEPNode? = null
+        private var prev : FEPNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < colors.size - 1) {
+                next = FEPNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawFEPNode(i, state.scale, paint)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            state.update(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : FEPNode {
+            var curr : FEPNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
+        }
+    }
 }
