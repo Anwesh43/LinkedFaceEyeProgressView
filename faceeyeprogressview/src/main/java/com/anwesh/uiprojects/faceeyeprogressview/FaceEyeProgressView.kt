@@ -196,4 +196,27 @@ class FaceEyeProgressView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : FaceEyeProgressView) {
+
+        private val animator = Animator(view)
+        private val fpe : FaceEyeProgress = FaceEyeProgress(0)
+        private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        fun render(canvas : Canvas) {
+            canvas.drawColor(backColor)
+            fpe.draw(canvas, paint)
+            animator.animate {
+                fpe.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            fpe.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
