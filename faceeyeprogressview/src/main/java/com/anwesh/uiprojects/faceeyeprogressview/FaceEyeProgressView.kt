@@ -26,14 +26,14 @@ val scGap : Float = 0.02f / (parts + 1)
 val strokeFactor : Float = 90f
 val rFactor : Float = 3.8f
 val concFactor : Float = 2.8f
-val eyeFactor : Float = 8.9f
+val eyeFactor : Float = 14.2f
 val backColor : Int = Color.parseColor("#BDBDBD")
 val delay : Long = 20
 val rot : Float = 360f
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
-fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n))
+fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n)) * n
 fun Float.sinify() : Float = Math.sin(this * Math.PI).toFloat()
 
 fun Canvas.drawFaceEyeProgress(scale : Float, w : Float, h : Float, paint : Paint) {
@@ -52,12 +52,12 @@ fun Canvas.drawFaceEyeProgress(scale : Float, w : Float, h : Float, paint : Pain
     rotate(rot * sf2)
     paint.style = Paint.Style.FILL
     for (j in 0..1) {
-        drawCircle(-2 * concR * (1f - 2 * j), -eyeR / 2, eyeR * sf1, paint)
+        drawCircle(-2 * eyeR * (1f - 2 * j), -eyeR / 2, eyeR * sf1, paint)
     }
     paint.style = Paint.Style.STROKE
-    drawArc(RectF(-faceR, -faceR, faceR, faceR), 0f, 360f * sf1, false, paint)
+    drawArc(RectF(-faceR, -faceR, faceR, faceR), 0f, rot * sf1, false, paint)
     restore()
-    drawArc(RectF(-concR, -concR, concR, concR), 360f * sc2, 360f * sc1, false, paint)
+    drawArc(RectF(-concR, -concR, concR, concR), rot * sc2, rot * (sc1 - sc2), false, paint)
     restore()
 }
 
@@ -92,7 +92,7 @@ class FaceEyeProgressView(ctx : Context) : View(ctx) {
         fun update(cb : (Float) -> Unit) {
             scale += dir * scGap
             if (Math.abs(scale - prevScale) > 1) {
-                scale += prevScale + dir
+                scale = prevScale + dir
                 dir = 0f
                 prevScale = scale
                 cb(prevScale)
