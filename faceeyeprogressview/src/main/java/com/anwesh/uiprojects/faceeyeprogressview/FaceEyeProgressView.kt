@@ -221,4 +221,13 @@ class FaceEyeProgressView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : FaceEyeProgressView {
+            val view : FaceEyeProgressView = FaceEyeProgressView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
